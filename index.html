@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STC | SHIMONOSEKI TRAINING CENTER - SUPREME</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Sans+JP:wght@300;700;900&display=swap');
+        
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: #020617; color: #f1f5f9; overflow-x: hidden; }
+        .font-en { font-family: 'Montserrat', sans-serif; }
+
+        /* 背景の動画的エフェクト（光が漂う） */
+        .bg-video-effect {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1e3a8a 0%, #020617 100%);
+            z-index: -2;
+        }
+        .bg-glow {
+            position: fixed; width: 600px; height: 600px; background: rgba(56, 189, 248, 0.05);
+            filter: blur(120px); border-radius: 50%; z-index: -1; animation: float 20s infinite alternate;
+        }
+        @keyframes float { from { transform: translate(-10%, -10%); } to { transform: translate(20%, 20%); } }
+
+        /* パララックス設定 */
+        .parallax-bg {
+            position: relative; height: 100vh; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .parallax-img {
+            position: absolute; top: 0; left: 0; width: 100%; height: 120%;
+            object-fit: cover; z-index: -1; opacity: 0.4;
+            transform: translateY(0); transition: transform 0.1s linear;
+        }
+
+        /* 木場建設様風のどっしりとしたカード */
+        .kiba-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .kiba-card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            background: rgba(30, 58, 138, 0.2);
+            transform: translateY(-20px);
+        }
+
+        /* 清水組様風のスクロール表示 */
+        .reveal { opacity: 0; transform: translateY(60px); transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* スクロールダウンの線 */
+        .scroll-line {
+            width: 1px; height: 80px; background: linear-gradient(to bottom, transparent, #38bdf8);
+            position: absolute; bottom: 0; left: 50%; animation: scrollDown 2s infinite;
+        }
+        @keyframes scrollDown { 0% { height: 0; opacity: 0; } 50% { height: 80px; opacity: 1; } 100% { height: 80px; opacity: 0; transform: translateY(20px); } }
+    </style>
+</head>
+<body>
+
+    <div class="bg-video-effect"></div>
+    <div class="bg-glow"></div>
+
+    <!-- 極上のナビゲーション -->
+    <nav class="fixed top-0 w-full z-50 px-10 py-8 flex justify-between items-center transition-all duration-500" id="main-nav">
+        <div class="flex items-center gap-6">
+            <img src="logo.png" alt="STC" class="h-10 brightness-0 invert">
+            <div class="w-px h-6 bg-white/20"></div>
+            <div class="font-en font-black text-2xl tracking-tighter text-white">STC.</div>
+        </div>
+        <div class="hidden lg:flex gap-16 font-bold text-[10px] tracking-[0.4em] text-white/50">
+            <a href="#company" class="hover:text-sky-400 transition">COMPANY</a>
+            <a href="#service" class="hover:text-sky-400 transition">SERVICE</a>
+            <a href="#contact" class="hover:text-sky-400 transition">CONTACT</a>
+        </div>
+        <a href="tel:0832460556" class="bg-white text-blue-900 px-10 py-4 font-black text-[10px] tracking-widest hover:bg-sky-400 hover:text-white transition shadow-2xl">ENQUIRY</a>
+    </nav>
+
+    <!-- ヒーローセクション：パララックス -->
+    <section class="parallax-bg">
+        <img src="hero.png" class="parallax-img" id="hero-img">
+        <div class="relative z-10 text-center px-6">
+            <h2 class="text-sky-400 font-en font-black tracking-[1em] mb-8 text-xs reveal active">SHIMONOSEKI TRAINING CENTER</h2>
+            <h1 class="text-6xl md:text-[8vw] font-black leading-tight text-white tracking-tighter mb-10 italic reveal active">
+                技術で結ぶ、<br><span class="text-transparent" style="-webkit-text-stroke: 1px #fff;">確かな未来。</span>
+            </h1>
+            <p class="text-white/40 text-lg md:text-xl font-bold tracking-widest reveal active">山口県下関市唯一の認可教習機関</p>
+        </div>
+        <div class="scroll-line"></div>
+    </section>
+
+    <!-- 木場建設様風：信頼の実績 -->
+    <section class="py-40 container mx-auto px-10" id="company">
+        <div class="grid lg:grid-cols-3 gap-10">
+            <div class="kiba-card p-12 rounded-2xl reveal">
+                <div class="w-16 h-16 bg-sky-500/20 rounded-full flex items-center justify-center mb-10">
+                    <i class="fas fa-shield-alt text-sky-400 text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-black mb-6 italic">山口労働局認可</h3>
+                <p class="text-white/40 leading-relaxed font-bold">公的に認められた唯一の機関として、厳格な基準に基づいた高品質な教習を提供します。</p>
+            </div>
+            <div class="kiba-card p-12 rounded-2xl reveal" style="transition-delay: 0.2s;">
+                <div class="w-16 h-16 bg-sky-500/20 rounded-full flex items-center justify-center mb-10">
+                    <i class="fas fa-clock text-sky-400 text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-black mb-6 italic italic">最短3日の集中講習</h3>
+                <p class="text-white/40 leading-relaxed font-bold">現場のニーズに応える効率的なカリキュラムで、即戦力となる資格取得をサポート。</p>
+            </div>
+            <div class="kiba-card p-12 rounded-2xl reveal" style="transition-delay: 0.4s;">
+                <div class="w-16 h-16 bg-sky-500/20 rounded-full flex items-center justify-center mb-10">
+                    <i class="fas fa-truck-moving text-sky-400 text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-black mb-6 italic italic">幅広い対応力</h3>
+                <p class="text-white/40 leading-relaxed font-bold">玉掛け、クレーン、フォークリフト。現場で必須となる3大資格を網羅しています。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 清水組様風：事業案内パララックス -->
+    <section class="py-40 bg-white/5 backdrop-blur-3xl" id="service">
+        <div class="container mx-auto px-10">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-32 reveal">
+                <div>
+                    <h2 class="text-6xl md:text-8xl font-black italic tracking-tighter">SERVICE</h2>
+                    <p class="text-sky-400 font-en tracking-[0.5em] text-xs mt-4 italic">事業のご案内</p>
+                </div>
+                <div class="h-px w-40 bg-white/20 mb-6 hidden md:block"></div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-40">
+                <div class="reveal">
+                    <div class="relative group overflow-hidden rounded-3xl mb-10 aspect-video">
+                        <img src="course1.png" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000 scale-110 group-hover:scale-100">
+                        <div class="absolute inset-0 bg-blue-900/40 group-hover:bg-transparent transition duration-700"></div>
+                    </div>
+                    <h4 class="text-3xl font-black italic mb-6">01. 玉掛け技能講習</h4>
+                    <p class="text-white/40 leading-loose font-bold italic mb-10">
+                        通常の起重機作業に欠かせない、安全の要。現場の生命線を担う確かな技術を伝承します。
+                    </p>
+                    <div class="w-20 h-1 bg-sky-400 transition-all duration-700 group-hover:w-full"></div>
+                </div>
+
+                <div class="reveal md:mt-40">
+                    <div class="relative group overflow-hidden rounded-3xl mb-10 aspect-video">
+                        <img src="course2.png" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000 scale-110 group-hover:scale-100">
+                        <div class="absolute inset-0 bg-blue-900/40 group-hover:bg-transparent transition duration-700"></div>
+                    </div>
+                    <h4 class="text-3xl font-black italic mb-6 uppercase">02. Crane Skills</h4>
+                    <p class="text-white/40 leading-loose font-bold italic mb-10">
+                        小型移動式クレーン。狭小な現場から広大なプロジェクトまで、機動力を最大化させる操縦術。
+                    </p>
+                    <div class="w-20 h-1 bg-sky-400 transition-all duration-700 group-hover:w-full"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- お問い合わせ：フッター -->
+    <footer class="py-60 relative overflow-hidden" id="contact">
+        <div class="container mx-auto px-10 text-center">
+            <h2 class="text-xs font-en font-black tracking-[1em] text-sky-400 mb-20 reveal">GET IN TOUCH</h2>
+            <a href="tel:0832460556" class="text-6xl md:text-[9vw] font-black font-en italic tracking-tighter text-white hover:text-sky-400 transition duration-500 reveal">
+                083.246.0556
+            </a>
+            <p class="text-white/20 mt-20 font-bold tracking-[0.5em] reveal italic">下関トレーニングセンター</p>
+        </div>
+    </footer>
+
+    <script>
+        // パララックス ＆ スクロールアニメーション
+        window.addEventListener('scroll', () => {
+            const scroll = window.pageYOffset;
+            
+            // パララックス
+            const heroImg = document.getElementById('hero-img');
+            heroImg.style.transform = `translateY(${scroll * 0.3}px)`;
+
+            // ナビゲーションの色変更
+            const nav = document.getElementById('main-nav');
+            if (scroll > 100) {
+                nav.style.background = 'rgba(2, 6, 23, 0.9)';
+                nav.style.paddingTop = '20px';
+                nav.style.paddingBottom = '20px';
+            } else {
+                nav.style.background = 'transparent';
+                nav.style.paddingTop = '32px';
+                nav.style.paddingBottom = '32px';
+            }
+
+            // Revealアニメーション
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(el => {
+                const windowHeight = window.innerHeight;
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) {
+                    el.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
