@@ -14,36 +14,54 @@
         .bg-glow { position: fixed; width: 600px; height: 600px; background: rgba(56, 189, 248, 0.05); filter: blur(120px); border-radius: 50%; z-index: -1; animation: float 20s infinite alternate; }
         @keyframes float { from { transform: translate(-10%, -10%); } to { transform: translate(20%, 20%); } }
         .parallax-bg { position: relative; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .parallax-img { position: absolute; top: 0; left: 0; width: 100%; height: 120%; object-fit: cover; z-index: -1; opacity: 0.4; }
+        .parallax-img { position: absolute; top: 0; left: 0; width: 100%; height: 120%; object-fit: cover; z-index: -1; opacity: 0.5; will-change: transform; }
         @keyframes kenburns { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
         .zoom-effect { animation: kenburns 20s ease-out forwards; }
         .kiba-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal { opacity: 0; transform: translateY(60px); transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .glass-bright-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 20px 40px rgba(0,0,0,0.1); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .glass-bright-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(0,0,0,0.15); }
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
-        .scroll-line { width: 1px; height: 80px; background: linear-gradient(to bottom, transparent, #38bdf8); position: absolute; bottom: 0; left: 50%; animation: scrollDown 2s infinite; }
-        @keyframes scrollDown { 0% { height: 0; opacity: 0; } 50% { height: 80px; opacity: 1; } 100% { height: 80px; opacity: 0; transform: translateY(20px); } }
+        .scroll-line { width: 1px; height: 80px; background: linear-gradient(to bottom, transparent, #38bdf8); position: absolute; bottom: 30px; left: 50%; animation: scrollDown 2s infinite; }
         .hero-title { font-size: clamp(2.5rem, 8vw, 8rem); }
+        /* モーダル用 */
+        #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(10px); z-index: 2000; opacity: 0; transition: opacity 0.5s; }
+        .modal-active #modal-overlay { display: flex; opacity: 1; }
     </style>
 </head>
 <body>
     <div class="bg-video-effect"></div><div class="bg-glow"></div>
 
-    <!-- 01. ナビゲーション（初期透明仕様） -->
+    <!-- モーダルウィンドウ -->
+    <div id="modal-overlay" class="items-center justify-center p-6">
+        <div id="modal-content" class="bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl">
+            <div class="p-8 border-b border-slate-100 flex justify-between items-center text-slate-900">
+                <h3 id="modal-title" class="text-2xl font-black italic"></h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-sky-600 transition text-3xl">&times;</button>
+            </div>
+            <div id="modal-body" class="p-10 text-slate-600 leading-loose font-bold italic"></div>
+            <div class="p-8 bg-slate-50 text-right">
+                <button onclick="closeModal()" class="bg-sky-600 text-white px-8 py-3 rounded-full font-black text-xs tracking-widest hover:bg-slate-900 transition">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 01. ナビゲーション -->
     <nav class="fixed top-0 w-full z-50 px-4 md:px-10 py-6 transition-all duration-500 bg-transparent" id="main-nav">
         <div class="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-0 w-full">
-            <div class="flex items-center gap-4 md:gap-8 text-left italic">
+            <div class="flex items-center gap-4 md:gap-8">
                 <img src="logo.png" alt="STC" class="h-12 md:h-20 w-auto block object-contain">
                 <div class="w-px h-10 bg-white/20 hidden md:block"></div>
-                <div class="font-bold text-lg md:text-2xl tracking-tighter text-white leading-tight">下関トレーニングセンター<br><span class="text-[10px] md:text-xs font-en font-light tracking-[0.2em] text-sky-400/80 uppercase">Shimonoseki Training Center</span></div>
+                <div class="font-bold text-lg md:text-2xl tracking-tighter text-white leading-tight text-left italic">下関トレーニングセンター<br><span class="text-[10px] md:text-xs font-en font-light tracking-[0.2em] text-sky-400/80 uppercase">Shimonoseki Training Center</span></div>
             </div>
-           <div class="hidden lg:flex gap-4 xl:gap-8 font-bold text-[11px] tracking-widest text-white/70 uppercase">
+            <div class="hidden lg:flex gap-4 xl:gap-8 font-bold text-[11px] tracking-widest text-white/70 uppercase italic">
                 <a href="#" class="hover:text-sky-400 transition text-sky-400">ホーム</a>
                 <a href="#service" class="hover:text-sky-400 transition">サービス</a>
                 <a href="#courses" class="hover:text-sky-400 transition">講習コース</a>
                 <a href="#features" class="hover:text-sky-400 transition text-nowrap">選ばれる理由</a>
                 <a href="#access" class="hover:text-sky-400 transition">アクセス</a>
             </div>
-            <a href="tel:0832460556" class="hidden lg:flex items-center gap-2 border-2 border-sky-400 text-sky-400 px-8 py-3 font-bold text-[12px] tracking-widest hover:bg-sky-400 hover:text-white transition-all shadow-[0_0_15px_rgba(56,189,248,0.3)] rounded-sm group uppercase">
+            <a href="tel:0832460556" class="hidden lg:flex items-center gap-2 border-2 border-sky-400 text-sky-400 px-8 py-3 font-bold text-[12px] tracking-widest hover:bg-sky-400 hover:text-white transition-all shadow-xl rounded-sm group uppercase">
                 <i class="fas fa-phone-alt text-[10px] group-hover:scale-110 transition duration-500"></i><span>お問い合わせ</span>
             </a>
         </div>
@@ -62,158 +80,142 @@
         <div class="scroll-line"></div>
     </section>
 
-    <!-- 03. SERVICE（理念と導線） -->
-    <section class="py-20 md:py-40 bg-white/[0.02] backdrop-blur-3xl overflow-hidden" id="service">
+    <!-- 03. SERVICE（重心を下げ、日本語タイトルをハッキリ） -->
+    <section class="py-40 md:py-60 bg-slate-50 text-slate-900 overflow-hidden" id="service">
         <div class="container mx-auto px-6 md:px-10">
-            <div class="grid lg:grid-cols-2 gap-20 items-center">
-                <div class="reveal text-left">
-                    <div class="relative mb-12">
-                        <h2 class="text-7xl md:text-[8vw] font-black italic tracking-tighter text-white/[0.03] absolute -top-10 -left-1">PHILOSOPHY</h2>
-                        <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter relative z-10 text-sky-400 uppercase">SERVICE</h2>
-                        <p class="text-white/40 font-en tracking-[0.3em] text-[10px] mt-2 italic uppercase">資格取得とキャリアの構築</p>
+            <div class="grid lg:grid-cols-2 gap-16 items-end"> 
+                <div class="reveal text-left relative pb-10">
+                    <div class="relative mb-16">
+                        <h2 class="text-7xl md:text-[8vw] font-black italic tracking-tighter text-slate-200 absolute -top-20 -left-1 select-none">PHILOSOPHY</h2>
+                        <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter relative z-10 text-sky-600 uppercase">SERVICE</h2>
+                        <p class="text-slate-500 font-bold tracking-[0.2em] text-xs md:text-sm mt-4 relative z-10 uppercase">資格取得とキャリアの構築</p>
                     </div>
-                    <h3 class="text-2xl md:text-3xl font-black italic mb-8 text-white leading-tight">現場の「即戦力」を、<br>最短ルートで。</h3>
-                    <p class="text-white/30 leading-loose font-bold italic mb-10 text-xs md:text-sm max-w-xl">下関トレーニングセンターは、現場で真に通用する「安全」と「技術」を習得するための、山口県下関市唯一の認可教習機関です。</p>
+                    <h3 class="text-2xl md:text-4xl font-black italic mb-8 text-slate-900 leading-tight">現場の「即戦力」を、<br><span class="text-sky-600">最短ルートで。</span></h3>
+                    <p class="text-slate-600 leading-loose font-bold mb-10 text-sm md:text-base max-w-xl">下関トレーニングセンターは、現場で真に通用する「安全」と「技術」を習得するための認可教習機関です。初めての方でも親切に指導いたします。</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 reveal" style="transition-delay: 0.3s;">
-                    <a href="#schedule" class="kiba-card p-8 rounded-2xl border-l-4 border-l-sky-500 group hover:bg-sky-500/10 transition-all text-left">
-                        <div class="text-4xl font-en font-black italic text-white/10 mb-4 group-hover:text-sky-400/50 transition-colors">01</div>
-                        <h4 class="text-lg font-black text-white mb-2 group-hover:text-sky-400 transition-colors">講習カレンダー</h4>
-                        <p class="text-[10px] font-bold text-white/30 italic uppercase">最新スケジュールを確認。</p>
-                    </a>
-                    <a href="#flow" class="kiba-card p-8 rounded-2xl border-l-4 border-l-sky-500 group hover:bg-sky-500/10 transition-all text-left">
-                        <div class="text-4xl font-en font-black italic text-white/10 mb-4 group-hover:text-sky-400/50 transition-colors">02</div>
-                        <h4 class="text-lg font-black text-white mb-2 group-hover:text-sky-400 transition-colors">受講お申し込み</h4>
-                        <p class="text-[10px] font-bold text-white/30 italic uppercase">WEB予約・資料請求はこちら。</p>
-                    </a>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 reveal" style="transition-delay: 0.3s;">
+                    <button onclick="openModal('schedule')" class="relative group text-left">
+                        <div class="glass-bright-card p-10 rounded-3xl border-l-8 border-l-sky-500 h-full flex flex-col justify-between overflow-hidden">
+                            <div class="absolute -right-4 -bottom-4 text-8xl font-black italic text-sky-400/10 group-hover:text-sky-400/20 transition-colors">01</div>
+                            <div class="relative z-10">
+                                <div class="w-14 h-14 bg-sky-500 rounded-2xl flex items-center justify-center mb-8 shadow-lg group-hover:scale-110 transition-transform"><i class="fas fa-calendar-alt text-white text-2xl"></i></div>
+                                <h4 class="text-2xl font-black text-slate-900 mb-2 group-hover:text-sky-600">講習<br>カレンダー</h4>
+                                <p class="text-xs font-bold text-slate-400 italic">最新スケジュールを確認</p>
+                            </div>
+                        </div>
+                    </button>
+                    <button onclick="openModal('apply')" class="relative group text-left">
+                        <div class="glass-bright-card p-10 rounded-3xl border-l-8 border-l-sky-500 h-full flex flex-col justify-between overflow-hidden">
+                            <div class="absolute -right-4 -bottom-4 text-8xl font-black italic text-sky-400/10 group-hover:text-sky-400/20 transition-colors">02</div>
+                            <div class="relative z-10">
+                                <div class="w-14 h-14 bg-sky-600 rounded-2xl flex items-center justify-center mb-8 shadow-lg group-hover:scale-110 transition-transform"><i class="fas fa-pen-nib text-white text-2xl"></i></div>
+                                <h4 class="text-2xl font-black text-slate-900 mb-2 group-hover:text-sky-600">受講<br>お申し込み</h4>
+                                <p class="text-xs font-bold text-slate-400 italic">WEB予約・資料請求</p>
+                            </div>
+                        </div>
+                    </button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 04. MAJOR COURSES -->
-    <section class="py-20 md:py-32 container mx-auto px-6 md:px-10" id="courses">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-24 reveal text-left">
-            <div class="relative">
-                <h2 class="text-7xl md:text-[10vw] font-black italic tracking-tighter text-white/[0.03] absolute -top-10 -left-1 uppercase">TRAINING</h2>
-                <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter relative z-10 text-sky-400 uppercase italic">Major Courses</h2>
-                <p class="text-white/40 font-en tracking-[0.3em] text-[10px] mt-2 italic uppercase">主要講習コースのご案内</p>
-            </div>
-            <div class="h-px w-20 md:w-40 bg-sky-400/30 mb-6 hidden md:block"></div>
+    <!-- 04. MAJOR COURSES（すりガラス質感・モノクロ→カラー復活） -->
+    <section class="py-24 md:py-32 container mx-auto px-6 md:px-10" id="courses">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 reveal text-left">
+            <div class="relative"><h2 class="text-7xl md:text-[10vw] font-black italic tracking-tighter text-white/[0.03] absolute -top-10 -left-1 select-none uppercase">TRAINING</h2><h2 class="text-4xl md:text-6xl font-black italic tracking-tighter relative z-10 text-sky-400 uppercase italic">Major Courses</h2><p class="text-white/40 font-en tracking-[0.3em] text-[10px] mt-2 italic uppercase">主要講習コースのご案内</p></div>
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
-            <div class="kiba-card rounded-2xl overflow-hidden reveal group">
-                <div class="relative h-56 overflow-hidden">
-                    <img src="course1.png" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000 scale-110 group-hover:scale-100">
-                    <div class="absolute inset-0 bg-blue-900/30 group-hover:bg-transparent transition duration-700"></div>
-                </div>
-                <div class="p-8 text-left text-white font-black italic">01. 玉掛け技能講習</div>
+            <div class="rounded-3xl overflow-hidden reveal group shadow-2xl flex flex-col glass-bright-card border-none">
+                <div class="relative h-64 overflow-hidden"><img src="course1.png" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000 group-hover:scale-110"><div class="absolute inset-0 bg-blue-900/30 group-hover:bg-transparent transition duration-700"></div></div>
+                <div class="p-10 text-left"><h3 class="text-2xl font-black mb-2 italic text-slate-900">01. 玉掛け技能講習</h3><p class="text-slate-400 text-xs font-bold italic tracking-wider uppercase">Slinging Skill</p></div>
             </div>
-            <div class="kiba-card rounded-2xl overflow-hidden reveal group" style="transition-delay: 0.2s;">
-                <div class="relative h-56 overflow-hidden">
-                    <img src="course3.png" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000 scale-110 group-hover:scale-100">
-                    <div class="absolute inset-0 bg-blue-900/30 group-hover:bg-transparent transition duration-700"></div>
-                </div>
-                <div class="p-8 text-left text-white font-black italic">02. フォークリフト運転</div>
+            <div class="rounded-3xl overflow-hidden reveal group shadow-2xl flex flex-col glass-bright-card border-none" style="transition-delay: 0.2s;">
+                <div class="relative h-64 overflow-hidden"><img src="course3.png" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000 group-hover:scale-110"><div class="absolute inset-0 bg-blue-900/30 group-hover:bg-transparent transition duration-700"></div></div>
+                <div class="p-10 text-left"><h3 class="text-2xl font-black mb-2 italic text-slate-900">02. フォークリフト運転</h3><p class="text-slate-400 text-xs font-bold italic tracking-wider uppercase">Forklift Operation</p></div>
             </div>
-            <div class="kiba-card rounded-2xl overflow-hidden reveal group" style="transition-delay: 0.4s;">
-                <div class="relative h-56 overflow-hidden">
-                    <img src="course2.png" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000 scale-110 group-hover:scale-100">
-                    <div class="absolute inset-0 bg-blue-900/30 group-hover:bg-transparent transition duration-700"></div>
-                </div>
-                <div class="p-8 text-left text-white font-black italic">03. 小型移動式クレーン</div>
+            <div class="rounded-3xl overflow-hidden reveal group shadow-2xl flex flex-col glass-bright-card border-none" style="transition-delay: 0.4s;">
+                <div class="relative h-64 overflow-hidden"><img src="course2.png" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000 group-hover:scale-110"><div class="absolute inset-0 bg-blue-900/30 group-hover:bg-transparent transition duration-700"></div></div>
+                <div class="p-10 text-left"><h3 class="text-2xl font-black mb-2 italic text-slate-900 text-nowrap">03. 小型移動式クレーン</h3><p class="text-slate-400 text-xs font-bold italic tracking-wider uppercase">Mobile Crane Skill</p></div>
             </div>
         </div>
     </section>
 
-    <!-- 05. Why Choose STC -->
-    <section class="py-20 md:py-40 bg-white/[0.01]" id="features">
+    <!-- 05. Why Choose STC（特大数字） -->
+    <section class="py-24 md:py-40 bg-white text-slate-900" id="features">
         <div class="container mx-auto px-6 md:px-10">
-            <div class="relative mb-24 reveal text-left">
-                <h2 class="text-[clamp(3rem,12vw,10rem)] font-black italic tracking-tighter text-white/[0.02] absolute -top-12 md:-top-24 -left-1 whitespace-nowrap uppercase">STC POINT</h2>
-                <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter relative z-10 text-sky-400 uppercase italic">Why Choose STC</h2>
+            <div class="relative mb-32 reveal text-left">
+                <h2 class="text-[clamp(3rem,12vw,10rem)] font-black italic tracking-tighter text-slate-100 absolute -top-16 md:-top-24 -left-1 whitespace-nowrap uppercase select-none">STC POINT</h2>
+                <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter relative z-10 text-sky-600 uppercase italic">Why Choose STC</h2>
+                <p class="text-slate-500 font-bold tracking-[0.2em] text-xs md:text-sm mt-4 relative z-10 uppercase">下関トレーニングセンターが選ばれる理由</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
-                <div class="kiba-card p-10 rounded-2xl border border-white/5 hover:border-sky-400/50 transition-all duration-700 group text-left">
-                    <div class="text-sky-400 font-en font-black italic mb-6 text-2xl opacity-30 group-hover:opacity-100 transition-opacity italic">01</div>
-                    <h4 class="text-xl font-black mb-6 text-white group-hover:text-sky-400 transition-colors italic">労働局登録教習機関</h4>
-                    <p class="text-white/30 text-xs font-bold italic leading-relaxed uppercase">山口労働局長登録教習機関として、高品質な教習を提供します。</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 reveal">
+                <div class="glass-bright-card p-12 rounded-3xl group text-left">
+                    <div class="text-sky-500 font-en font-black italic mb-8 text-6xl opacity-20 group-hover:opacity-100 transition-opacity duration-700">01</div>
+                    <h4 class="text-2xl font-black mb-6 text-slate-900 group-hover:text-sky-600 italic transition-colors">労働局登録教習機関</h4>
+                    <p class="text-slate-500 text-sm font-bold italic leading-relaxed uppercase">山口労働局長登録教習機関として、高品質な教習を提供します。</p>
                 </div>
-                <div class="kiba-card p-10 rounded-2xl border border-white/5 hover:border-sky-400/50 transition-all duration-700 group text-left" style="transition-delay: 0.2s;">
-                    <div class="text-sky-400 font-en font-black italic mb-6 text-2xl opacity-30 group-hover:opacity-100 transition-opacity italic">02</div>
-                    <h4 class="text-xl font-black mb-6 text-white group-hover:text-sky-400 transition-colors italic">手ぶらで受講可能</h4>
-                    <p class="text-white/30 text-xs font-bold italic leading-relaxed uppercase">無料送迎バスや装備貸出も充実。安心して受講できる環境を整えています。</p>
+                <div class="glass-bright-card p-12 rounded-3xl group text-left" style="transition-delay: 0.2s;">
+                    <div class="text-sky-500 font-en font-black italic mb-8 text-6xl opacity-20 group-hover:opacity-100 transition-opacity duration-700">02</div>
+                    <h4 class="text-2xl font-black mb-6 text-slate-900 group-hover:text-sky-600 italic transition-colors">手ぶらで受講可能</h4>
+                    <p class="text-slate-500 text-sm font-bold italic leading-relaxed uppercase">無料送迎バスやヘルメット等の装備貸出も充実しています。</p>
                 </div>
-                <div class="kiba-card p-10 rounded-2xl border border-white/5 hover:border-sky-400/50 transition-all duration-700 group text-left" style="transition-delay: 0.4s;">
-                    <div class="text-sky-400 font-en font-black italic mb-6 text-2xl opacity-30 group-hover:opacity-100 transition-opacity italic">03</div>
-                    <h4 class="text-xl font-black mb-6 text-white group-hover:text-sky-400 transition-colors italic">現場で生きる生きた指導</h4>
-                    <p class="text-white/30 text-xs font-bold italic leading-relaxed uppercase">ベテラン職人の指導員が、実戦ですぐに役立つ本物の技術を伝授します。</p>
+                <div class="glass-bright-card p-12 rounded-3xl group text-left" style="transition-delay: 0.4s;">
+                    <div class="text-sky-500 font-en font-black italic mb-8 text-6xl opacity-20 group-hover:opacity-100 transition-opacity duration-700">03</div>
+                    <h4 class="text-2xl font-black mb-6 text-slate-900 group-hover:text-sky-600 italic transition-colors text-nowrap">現場で生きる生きた指導</h4>
+                    <p class="text-slate-500 text-sm font-bold italic leading-relaxed uppercase">ベテラン職人の指導員が、実戦ですぐに役立つ技術を伝授します。</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- 06. POINT & FAQ -->
-    <section class="py-20 container mx-auto px-6 md:px-10 overflow-hidden relative">
-        <div class="absolute inset-0 bg-sky-500/5 blur-[100px] -z-10 rounded-full scale-150 transform translate-y-20"></div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 reveal text-center">
-            <a href="#faq" class="kiba-card p-12 rounded-3xl hover:bg-sky-500/10 transition-all flex flex-col items-center shadow-2xl">
-                <div class="w-16 h-16 bg-sky-500/20 rounded-full flex items-center justify-center mb-6"><i class="fas fa-comments text-sky-400 text-2xl"></i></div>
-                <h4 class="text-white font-black italic mb-4">よくある質問</h4>
-                <p class="text-[10px] text-sky-400 font-black uppercase italic mb-6 border-b border-sky-400/30 pb-2">Questions & Answer</p>
-            </a>
-            <a href="#subsidy" class="kiba-card p-12 rounded-3xl hover:bg-sky-500/10 transition-all flex flex-col items-center shadow-2xl" style="transition-delay: 0.1s;">
-                <div class="w-16 h-16 bg-sky-500/20 rounded-full flex items-center justify-center mb-6"><i class="fas fa-hand-holding-usd text-sky-400 text-2xl"></i></div>
-                <h4 class="text-white font-black italic mb-4">助成金について</h4>
-                <p class="text-[10px] text-sky-400 font-black uppercase italic mb-6 border-b border-sky-400/30 pb-2">Subsidy Information</p>
-            </a>
-            <a href="#flow" class="kiba-card p-12 rounded-3xl hover:bg-sky-500/10 transition-all flex flex-col items-center shadow-2xl" style="transition-delay: 0.2s;">
-                <div class="w-16 h-16 bg-sky-500/20 rounded-full flex items-center justify-center mb-6"><i class="fas fa-pencil-alt text-sky-400 text-2xl"></i></div>
-                <h4 class="text-white font-black italic mb-4">お申し込みの流れ</h4>
-                <p class="text-[10px] text-sky-400 font-black uppercase italic mb-6 border-b border-sky-400/30 pb-2">Application Flow</p>
-            </a>
+    <section class="py-24 container mx-auto px-6 md:px-10 overflow-hidden relative">
+        <div class="absolute inset-0 bg-sky-500/5 blur-[100px] -z-10 rounded-full transform translate-y-20"></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal text-center">
+            <a href="#faq" class="kiba-card p-12 rounded-3xl hover:bg-sky-500/10 transition-all flex flex-col items-center"><div class="w-16 h-16 bg-sky-500/20 rounded-full flex items-center justify-center mb-6"><i class="fas fa-comments text-sky-400 text-2xl"></i></div><h4 class="text-white font-black italic mb-4">よくある質問</h4><p class="text-[10px] text-sky-400 font-black uppercase italic border-b border-sky-400/30 pb-2">Questions & Answer</p></a>
+            <a href="#subsidy" class="kiba-card p-12 rounded-3xl hover:bg-sky-500/10 transition-all flex flex-col items-center" style="transition-delay: 0.1s;"><div class="w-16 h-16 bg-sky-500/20 rounded-full flex items-center justify-center mb-6"><i class="fas fa-hand-holding-usd text-sky-400 text-2xl"></i></div><h4 class="text-white font-black italic mb-4">助成金について</h4><p class="text-[10px] text-sky-400 font-black uppercase italic border-b border-sky-400/30 pb-2">Subsidy Information</p></a>
+            <a href="#flow" class="kiba-card p-12 rounded-3xl hover:bg-sky-500/10 transition-all flex flex-col items-center" style="transition-delay: 0.2s;"><div class="w-16 h-16 bg-sky-500/20 rounded-full flex items-center justify-center mb-6"><i class="fas fa-pencil-alt text-sky-400 text-2xl"></i></div><h4 class="text-white font-black italic mb-4">お申し込みの流れ</h4><p class="text-[10px] text-sky-400 font-black uppercase italic border-b border-sky-400/30 pb-2">Application Flow</p></a>
         </div>
     </section>
 
-    <!-- 07. FINAL CONTACT (ネイビー統一バナー) -->
-    <section class="py-20 md:py-32 relative overflow-hidden" id="access">
+    <!-- 07. CONTACT US（電話・FAXネイビー統一バナー復活） -->
+    <section class="py-20 md:py-32 relative overflow-hidden bg-slate-900/50" id="access">
         <div class="absolute inset-0 bg-sky-500/10 backdrop-blur-3xl -z-10"></div>
         <div class="container mx-auto px-6 md:px-10 text-center">
             <div class="reveal mb-16 italic text-white uppercase tracking-widest">
-                <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter mb-4 italic">CONTACT US</h2>
-                <p class="text-sky-400 font-en tracking-[0.5em] text-[10px] md:text-xs italic uppercase italic">下関トレーニングセンターへのお問い合わせ</p>
+                <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter mb-4">CONTACT US</h2>
+                <p class="text-sky-400 font-en tracking-[0.5em] text-[10px] md:text-xs italic uppercase">下関トレーニングセンターへのお問い合わせ</p>
             </div>
             <div class="flex flex-col md:flex-row justify-center gap-6 md:gap-10 reveal mb-20 font-black italic">
-                <!-- TEL (ネイビー透過) -->
-                <a href="tel:0832460556" class="kiba-card p-8 rounded-2xl flex items-center justify-center gap-6 hover:bg-sky-500/20 transition-all duration-500 group border border-white/10 w-full max-w-sm mx-auto md:mx-0">
+                <a href="tel:0832460556" class="kiba-card p-8 rounded-2xl flex items-center justify-center gap-6 hover:bg-sky-500/20 transition-all duration-500 group border border-white/10 w-full max-w-sm mx-auto md:mx-0 shadow-2xl">
                     <i class="fas fa-phone-alt text-3xl text-sky-400 group-hover:scale-110 transition duration-500"></i>
                     <div class="text-left"><p class="text-[10px] uppercase opacity-40 mb-1">TEL</p><p class="text-3xl font-en tracking-tighter text-white text-nowrap">083.246.0556</p></div>
                 </a>
-                <!-- FAX (ネイビー透過) -->
                 <div class="kiba-card p-8 rounded-2xl flex items-center justify-center gap-6 border border-white/10 w-full max-w-sm mx-auto md:mx-0">
                     <i class="fas fa-fax text-3xl text-sky-400 opacity-60"></i>
                     <div class="text-left"><p class="text-[10px] uppercase opacity-40 mb-1">FAX</p><p class="text-3xl font-en tracking-tighter text-white/80 text-nowrap">083.246.2835</p></div>
                 </div>
             </div>
-            <div class="reveal max-w-4xl mx-auto border-t border-white/10 pt-16 uppercase italic">
-                <h4 class="text-sky-400 font-black italic tracking-[0.3em] text-[10px] mb-8 uppercase italic">Service Area</h4>
+            <div class="reveal max-w-4xl mx-auto border-t border-white/10 pt-16 uppercase italic text-center">
+                <h4 class="text-sky-400 font-black italic tracking-[0.3em] text-[10px] mb-8 uppercase">Service Area</h4>
                 <p class="text-white/40 text-[10px] md:text-xs leading-relaxed font-bold italic px-4">山口県全域（下関市、宇部市、山口市、萩市、防府市、下松市、岩国市、光市、長門市、柳井市、美祢市、周南市、山陽小野田市）、福岡県北九州市</p>
             </div>
         </div>
     </section>
 
-    <!-- 08. FOOTER (ロゴ背景馴染ませ版) -->
-    <footer class="py-24 bg-black/80 border-t border-white/5 backdrop-blur-xl text-center">
+    <!-- 08. FOOTER（ロゴスモーク解除・ハッキリ版） -->
+    <footer class="py-24 bg-black/90 border-t border-white/5 backdrop-blur-xl text-center">
         <div class="container mx-auto px-6 md:px-10 flex flex-col items-center">
             <div class="mb-12 reveal">
-                <img src="logo.png" alt="STC" class="h-20 md:h-32 w-auto mx-auto opacity-70 hover:opacity-100 transition-all duration-1000 hover:scale-105 filter drop-shadow(0 0 20px rgba(56,189,248,0.1))">
+                <!-- スモークを外し、ハッキリ表示（opacity-100） -->
+                <img src="logo.png" alt="STC" class="h-20 md:h-32 w-auto mx-auto opacity-100 transition-all duration-1000 hover:scale-105 drop-shadow(0 0 20px rgba(56,189,248,0.2))">
                 <div class="h-px w-20 bg-sky-400 mx-auto mt-8 opacity-30"></div>
             </div>
             <div class="text-center mb-10 text-white/40 font-bold italic uppercase italic tracking-widest leading-loose">
-                <p class="text-white font-black text-xl md:text-2xl mb-4">下関トレーニングセンター</p>
+                <p class="text-white font-black text-xl md:text-2xl mb-4 uppercase">下関トレーニングセンター</p>
                 <p class="text-[10px] mb-8 text-sky-400/60 uppercase tracking-[0.4em]">山口労働局長登録教習機関 第68号</p>
-                <div class="space-y-1 opacity-70 font-bold">
-                    <p class="text-[11px] md:text-xs">〒752-8609 山口県下関市長府安養寺1丁目15-13</p>
+                <div class="space-y-1 opacity-70 font-bold italic">
+                    <p class="text-[11px] md:text-xs uppercase">〒752-8609 山口県下関市長府安養寺1丁目15-13</p>
                     <p class="text-[11px] md:text-xs">TEL 083-246-0556 / FAX 083-246-2835</p>
                 </div>
             </div>
@@ -222,27 +224,24 @@
     </footer>
 
     <script>
+        function openModal(type) {
+            const overlay = document.getElementById('modal-overlay');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+            if(type === 'schedule') { title.innerText = '講習スケジュール'; body.innerHTML = '【玉掛け】毎週火曜〜木曜【フォークリフト】第2・第4週 開講中。<br>詳細な空き状況はお電話にてご確認ください。'; }
+            else { title.innerText = '受講お申し込み'; body.innerHTML = 'WEBまたはお電話にて承っております。<br>現在WEBフォーム準備中につき、お電話(083-246-0556)にて優先予約を承っております。'; }
+            document.body.classList.add('modal-active');
+        }
+        function closeModal() { document.body.classList.remove('modal-active'); }
         window.addEventListener('scroll', () => {
             const scroll = window.pageYOffset;
             const heroImg = document.getElementById('hero-img');
             if(heroImg) heroImg.style.transform = `translateY(${scroll * 0.3}px)`;
-            
             const nav = document.getElementById('main-nav');
-            if (scroll > 50) {
-                nav.style.background = 'rgba(2, 6, 23, 0.95)';
-                nav.style.padding = '15px 40px';
-                nav.classList.add('shadow-2xl');
-            } else {
-                nav.style.background = 'transparent';
-                nav.style.padding = '24px 40px';
-                nav.classList.remove('shadow-2xl');
-            }
-
+            if (scroll > 50) { nav.style.background = 'rgba(2, 6, 23, 0.95)'; nav.style.padding = '15px 40px'; nav.classList.add('shadow-2xl'); } 
+            else { nav.style.background = 'transparent'; nav.style.padding = '24px 40px'; nav.classList.remove('shadow-2xl'); }
             const reveals = document.querySelectorAll('.reveal');
-            reveals.forEach(el => {
-                if (el.getBoundingClientRect().top < window.innerHeight - 50) el.classList.add('active');
-            });
+            reveals.forEach(el => { if (el.getBoundingClientRect().top < window.innerHeight - 50) el.classList.add('active'); });
         });
     </script>
 </body>
-</html>
