@@ -318,17 +318,21 @@
         const file = e.target.files[0];
         if (!file) return;
 
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true; // 処理が終わるまでボタンを無効化
+        btn.innerText = "写真を高画質で処理中...";
+
         const reader = new FileReader();
         reader.onload = function(event) {
             const base64String = event.target.result;
-            const previewBox = document.getElementById('photo-preview-box');
-            // アイコンを消して画像を表示（object-containで全身が収まるように調整）
-            previewBox.innerHTML = `<img src="${base64String}" class="absolute inset-0 w-full h-full object-contain p-2 rounded-2xl bg-white">`;
+            document.getElementById('photo-preview-box').innerHTML = `<img src="${base64String}" class="absolute inset-0 w-full h-full object-contain p-2 rounded-2xl bg-white">`;
             document.getElementById('userPhotoBase64').value = base64String;
+
+            btn.disabled = false; // 処理完了後に有効化
+            btn.innerText = "申し込みを送信する";
         };
         reader.readAsDataURL(file);
     });
-
         // 講習ごとの受講料・追加項目切り替え
         function updateCourseUI(course, isSimple) {
             const feeEl = document.getElementById('displayFee');
@@ -419,6 +423,13 @@
 
 // 送信処理（決定版）
 document.getElementById('applyForm').addEventListener('submit', async e => {
+    const currentMode = new URLSearchParams(window.location.search).get('mode') || "full";
+    const photoVal = document.getElementById('userPhotoBase64')?.value;
+
+    if (currentMode === 'full' && (!photoVal || photoVal.length < 100)) {
+        alert("証明写真が正しく選択されていないか、処理中です。もう一度写真を選び直してください。");
+        return; // ここで送信を強制中止する
+    }
     e.preventDefault();
     const btn = document.getElementById('submitBtn'); 
     btn.disabled = true; btn.innerText = "送信中...";
@@ -435,7 +446,7 @@ document.getElementById('applyForm').addEventListener('submit', async e => {
             courseName: document.getElementById('courseName').value,
             courseDate: document.getElementById('courseDate').value,
             mode: currentMode,
-            status: 'accepted', 
+            status: urlParams.get('status') === 'waiting' ? 'waiting' : 'accepted',
             createdAt: serverTimestamp(),
             memo: regNoUrl ? "仮予約からの移行(" + regNoUrl + ")" : "新規申込"
         };
